@@ -340,7 +340,7 @@ app.registerExtension({
       this.addWidget("button", "Help ?", null, () => showMarkdownHelp());
       if (this.computeSize && this.setSize) {
         const size = this.computeSize();
-        this.setSize([size, size]);
+        this.setSize(size);
       }
       return this;
     };
