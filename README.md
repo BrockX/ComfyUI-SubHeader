@@ -103,3 +103,5 @@ It was made as a personal project as I'm apparently a clean freak. I wanted my S
 You will probably find some issues with it, and if you do, please feel free to share. I'm not certain I will fix them though, cause I'm lazy.
 
 Build with alongside an LLM. I made my best to comment and organize it so I could understand all.
+
+Want to fork it? Please do! You'll do a better job I'm sure. The idea is for everyone to enjoy the great pleasure of ORGANIZING! So, you feel free to do whatever you want with it!
