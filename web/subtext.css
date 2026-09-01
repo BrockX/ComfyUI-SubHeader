@@ -1,0 +1,223 @@
+/* =========================================================
+   SUBTEXT UI & EDITOR
+   ========================================================= */
+.subtext-ui {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 8px 9px 20px 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: Inter, system-ui, sans-serif;
+  overflow: hidden; /* Empêche le HTML de déborder du node */
+}
+
+/* Barre supérieure d'outils */
+.subtext-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+/* Bouton d'aide */
+.subtext-help-btn {
+  background: #2c313c;
+  border: 1px solid #3e4451;
+  color: #abb2bf;
+  border-radius: 4px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.subtext-help-btn:hover {
+  background: #3e4451;
+  color: #fff;
+}
+
+/* Zone d'édition de texte (Textarea) IMPÉRIALEMENT FLUIDE */
+.subtext-editor {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 90px;
+  background: #101216;
+  border: 1px solid #292f38;
+  border-radius: 5px;
+  color: #e7e9ed;
+  font-family: monospace;
+  font-size: 12px;
+  padding: 8px;
+  box-sizing: border-box !important; /* Force le calcul interne de la largeur */
+  resize: vertical;
+  outline: none;
+}
+
+.subtext-editor:focus {
+  border-color: #343b46;
+}
+
+/* =========================================================
+   MARKDOWN GUIDE POPUP
+   ========================================================= */
+#subtext-help-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1c1f24;
+  border: 1px solid #3e4451;
+  border-radius: 8px;
+  padding: 20px;
+  z-index: 10001;
+  color: #e7e9ed;
+  font-family: sans-serif;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  width: 360px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#subtext-help-popup h3 {
+  margin-top: 0;
+  color: #fff;
+  border-bottom: 1px solid #3e4451;
+  padding-bottom: 8px;
+}
+#subtext-help-popup h4 {
+  margin: 14px 0 6px 0;
+  color: #fff;
+  font-size: 12px;
+  border-top: 1px solid #3e4451;
+  padding-top: 8px;
+  text-transform: uppercase;
+}
+#subtext-help-popup ul {
+  padding-left: 18px;
+  line-height: 1.5;
+  font-size: 12px;
+  margin: 4px 0;
+}
+#subtext-help-popup button {
+  margin-top: 18px;
+  width: 100%;
+  background: #2c313c;
+  border: 1px solid #3e4451;
+  color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.subtext-help-footer {
+  margin-top: 14px;
+  padding-top: 8px;
+  border-top: 1px solid #3e4451;
+  font-size: 11px;
+  color: #abb2bf;
+  text-align: center;
+}
+.subtext-help-footer a {
+  color: #528bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+.subtext-help-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   CUSTOM COMPACT POPUP MODAL
+   ============================================================ */
+#subtext-custom-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#subtext-custom-modal {
+  background-color: #1c1e22;
+  border: 1px solid #2d3139;
+  border-radius: 6px;
+  width: 400px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  font-family: Inter, system-ui, sans-serif;
+  color: #abb2bf;
+}
+
+#subtext-custom-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #2d3139;
+  background-color: #181a1f;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+#subtext-custom-modal .modal-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e5c07b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#subtext-custom-modal .modal-close {
+  background: none;
+  border: none;
+  color: #5c6370;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.1s ease;
+}
+
+#subtext-custom-modal .modal-close:hover {
+  color: #ef596f;
+}
+
+#subtext-custom-modal .modal-body {
+  padding: 12px 14px;
+  font-size: 11px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+#subtext-custom-modal h4 {
+  margin: 12px 0 4px 0;
+  font-size: 10px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #2d3139;
+  padding-bottom: 2px;
+}
+
+#subtext-custom-modal ul {
+  padding-left: 14px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+#subtext-custom-modal .syntax-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+#subtext-custom-modal .syntax-list li {
+  margin-bottom: 3px;
+}

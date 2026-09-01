@@ -1,0 +1,5 @@
+[project]
+name = "comfyui-subheader"
+version = "1.0.0"
+description = "Visual headers, separators and information boxes for ComfyUI and Subgraphs."
+license = {text = "MIT"}

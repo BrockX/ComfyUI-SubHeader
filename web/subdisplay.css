@@ -1,0 +1,127 @@
+/* ============================================================
+   1. COMPATIBILITY AND PACK INTEGRATION (SUBHEADER STYLE)
+   ============================================================ */
+.subheader-element-card {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 5px 8px;
+  box-sizing: border-box;
+  background: var(--sh-node, #15181d);
+  border: 1px solid var(--sh-border, #292f38);
+  border-radius: 6px;
+}
+
+/* ============================================================
+   2. CONFIGURATION OF THE DEDICATED INTERNAL HTML PANEL
+   ============================================================ */
+/* Boîte parente du texte (gérée par le JS en hauteur) */
+.subdisplay-ui {
+  padding: 8px;
+  background-color: #111317;
+  border-radius: 6px;
+  border: 1px solid #232830;
+  margin-top: 8px;
+  box-sizing: border-box;
+  overflow: hidden; /* 🚀 IMPORTANT : Empêche le conteneur de déborder du nœud */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Zone textuelle Markdown interne */
+.subdisplay-render-box {
+  color: #e7e9ed;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 1.4;
+  width: 100%;
+  height: 100%; /* 🚀 IMPORTANT : Remplit exactement la hauteur de .subdisplay-ui */
+  flex-grow: 1; /* S'étire pour occuper tout l'espace disponible */
+  overflow-y: auto; /* Active la scrollbar dès que le texte dépasse la hauteur du nœud */
+  overflow-x: hidden;
+  padding-right: 4px;
+  box-sizing: border-box;
+}
+
+/* Scrollbar minimaliste */
+.subdisplay-render-box::-webkit-scrollbar {
+  width: 4px;
+}
+.subdisplay-render-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+.subdisplay-render-box::-webkit-scrollbar-thumb {
+  background: #232830;
+  border-radius: 4px;
+}
+.subdisplay-render-box::-webkit-scrollbar-thumb:hover {
+  background: #2d3139;
+}
+
+/* ============================================================
+   3. ADVANCED MARKDOWN TABLES COMPONENT
+   ============================================================ */
+.subdisplay-render-box table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 8px 0;
+  border: 1px solid #232830;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Header Row Styling (Distinctive yet non-aggressive) */
+.subdisplay-render-box tr:first-child {
+  background-color: #1e222a;
+  color: #e5c07b;
+  font-weight: 600;
+}
+
+/* Body Rows Alternating Background (Zebra Striping) */
+.subdisplay-render-box tr:not(:first-child):nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Row Bottom Borders */
+.subdisplay-render-box tr:not(:last-child) {
+  border-bottom: 1px solid #1a1d24;
+}
+
+/* Table Cells Structural Configuration */
+.subdisplay-render-box td {
+  padding: 6px 8px;
+  text-align: center; /* Centers text inside the HTML view cell */
+  border-bottom: 1px solid #1e222a;
+}
+
+/* Remove bottom border from the final table row cells */
+.subdisplay-render-box tr:last-child td {
+  border-bottom: none;
+}
+
+/* ============================================================
+   4. FLEXBOX FLOW & MASTER COMPRESSED LAYOUT
+   ============================================================ */
+.subdisplay-master-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.subdisplay-master-container .subheader-ui {
+  flex-shrink: 0;
+}
+
+.subdisplay-master-container .subdisplay-ui {
+  flex-grow: 1;
+  min-height: 60px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}

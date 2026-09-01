@@ -1,0 +1,623 @@
+/* =========================================================
+   SUBHEADER UI
+   ========================================================= */
+.subheader-ui {
+  --sh-node: #15181d;
+  --sh-panel: #1b1f26;
+  --sh-panel-hover: #20252d;
+  --sh-border: #292f38;
+  --sh-border-light: #343b46;
+  --sh-text: #e7e9ed;
+  --sh-muted: #808895;
+  --sh-dim: #606875;
+  --sh-text2: #ede7ed;
+  --sh-panel2: #251b26;
+  --sh-border2: #372938;
+  --sh-panel-hover2: #2d202b;
+  --sh-border-light2: #654b65;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 320px;
+  padding: 8px 9px 20px 9px;
+  color: var(--sh-text);
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: 12px;
+}
+
+/* =========================================================
+   ELEMENT LIST
+   ========================================================= */
+.subheader-element-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+/* =========================================================
+   ELEMENT ROW
+   ========================================================= */
+.subheader-element-row {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  gap: 4px;
+}
+
+/* =========================================================
+   DRAG HANDLE
+   ========================================================= */
+.subheader-drag-handle {
+  width: 22px;
+  min-width: 22px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px solid var(--sh-border);
+  border-radius: 5px;
+  background: var(--sh-node);
+  color: var(--sh-muted);
+  font-size: 13px;
+  line-height: 1;
+  cursor: grab;
+  user-select: none;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease;
+}
+.subheader-drag-handle:hover {
+  background: var(--sh-panel);
+  border-color: var(--sh-border-light);
+  color: var(--sh-text);
+}
+.subheader-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* =========================================================
+   ELEMENT CARD
+   ========================================================= */
+.subheader-element-card {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 5px 6px;
+  box-sizing: border-box;
+  background: var(--sh-node);
+  border: 1px solid var(--sh-border);
+  border-radius: 6px;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
+}
+.subheader-element-card:hover {
+  background: var(--sh-panel);
+  border-color: var(--sh-border-light);
+}
+
+/* =========================================================
+   DRAGGING
+   ========================================================= */
+.subheader-element-row.dragging {
+  opacity: 0.45;
+}
+.subheader-element-row.drag-over .subheader-element-card {
+  border-color: #596272;
+}
+
+/* =========================================================
+   LEFT SIDE
+   ========================================================= */
+.subheader-card-left {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 5px;
+}
+
+/* =========================================================
+   TYPE ICON
+   ========================================================= */
+.subheader-type-icon {
+  width: 17px;
+  height: 17px;
+  display: block;
+  object-fit: contain;
+  opacity: 0.88;
+}
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+.subheader-settings-button {
+  width: 23px;
+  height: 23px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--sh-muted);
+  font-size: 20px;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease,
+    border-color 0.12s ease;
+}
+.subheader-settings-button:hover {
+  background: var(--sh-panel-hover);
+  border-color: var(--sh-border-light);
+  color: var(--sh-text);
+}
+
+/* =========================================================
+   INLINE HEADER NAME
+   ========================================================= */
+.subheader-inline-name {
+  flex: 1;
+  min-width: 0;
+  height: 25px;
+  margin-left: 7px;
+  padding: 3px 7px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--sh-text);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+.subheader-inline-name:hover {
+  background: var(--sh-panel);
+  border-color: var(--sh-border);
+}
+.subheader-inline-name:focus {
+  background: #101216;
+  border-color: var(--sh-border-light);
+}
+
+/* =========================================================
+   POSITION
+   ========================================================= */
+.subheader-position-label {
+  margin-left: 7px;
+  margin-right: 4px;
+  color: var(--sh-dim);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.subheader-position {
+  flex-shrink: 0;
+}
+.subheader-position input {
+  width: 47px;
+  height: 25px;
+  box-sizing: border-box;
+  padding: 2px 5px;
+  border: 1px solid var(--sh-border);
+  border-radius: 4px;
+  background: #101216;
+  color: var(--sh-text);
+  font-family: inherit;
+  font-size: 11px;
+  text-align: center;
+  outline: none;
+}
+.subheader-position input:focus {
+  border-color: #505866;
+}
+
+/* =========================================================
+   LINE POSITION
+   ========================================================= */
+.subheader-position-text {
+  flex: 1;
+  min-width: 0;
+  margin-left: 9px;
+  color: var(--sh-muted);
+  font-size: 11px;
+}
+
+/* =========================================================
+   SPACING
+   ========================================================= */
+.subheader-spacing-card {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.subheader-spacing-label {
+  margin-left: 9px;
+  color: var(--sh-muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.subheader-spacing-control {
+  flex: 1;
+  min-width: 80px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.subheader-spacing-range {
+  flex: 1;
+  min-width: 40px;
+}
+.subheader-spacing-value {
+  width: 36px;
+  flex-shrink: 0;
+  color: var(--sh-muted);
+  font-family: monospace;
+  font-size: 10px;
+  text-align: left;
+}
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+.subheader-delete-button {
+  width: 20px;
+  height: 20px;
+  margin-top: 8px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1px solid #4a3033;
+  border-radius: 5px;
+  background: #24191b;
+  color: #b8787e;
+  font-family: inherit;
+  font-size: 8px;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease;
+}
+.subheader-delete-button:hover {
+  background: #3a2024;
+  border-color: #704249;
+  color: #e69aa0;
+}
+
+/* =========================================================
+   ADD LABEL
+   ========================================================= */
+.subheader-add-label {
+  margin-top: 12px;
+  margin-bottom: 6px;
+  padding: 5px 95px 0 95px;
+  text-align: center;
+  color: #d9dee7;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  border-top: 1px solid #575a5f;
+}
+
+/* =========================================================
+   ADD BUTTONS
+   ========================================================= */
+.subheader-add-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.subheader-add-button {
+  min-width: 0;
+  height: 31px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid var(--sh-border2);
+  border-radius: 5px;
+  background: var(--sh-panel2);
+  color: var(--sh-muted);
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease;
+}
+.subheader-add-button:hover {
+  background: var(--sh-panel-hover2);
+  border-color: var(--sh-border-light2);
+  color: var(--sh-text);
+}
+.subheader-add-button .subheader-type-icon {
+  width: 15px;
+  height: 15px;
+}
+
+/* =========================================================
+   MODAL OVERLAY
+   ========================================================= */
+.subheader-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(2px);
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+.subheader-modal {
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: #15181d;
+  border: 1px solid #303640;
+  border-radius: 9px;
+  box-shadow:
+    0 18px 55px rgba(0, 0, 0, 0.55),
+    0 3px 12px rgba(0, 0, 0, 0.35);
+  color: var(--sh-text);
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  animation: subheader-modal-in 0.12s ease-out;
+}
+@keyframes subheader-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   MODAL HEADER
+   ========================================================= */
+.subheader-modal-header {
+  height: 45px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  background: #1b1f26;
+  border-bottom: 1px solid #292f38;
+}
+.subheader-modal-title {
+  color: #e7e9ed;
+  font-size: 13px;
+  font-weight: 600;
+}
+.subheader-modal-close {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #808895;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+}
+.subheader-modal-close:hover {
+  background: #292f38;
+  color: #e7e9ed;
+}
+
+/* =========================================================
+   PREVIEW
+   ========================================================= */
+.subheader-preview-label {
+  margin: 15px 13px 6px;
+  color: #606875;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.subheader-preview {
+  height: 48px;
+  margin: 0 13px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: #0f1115;
+  border: 1px solid #292f38;
+  border-radius: 6px;
+}
+
+/* =========================================================
+   HEADER PREVIEW
+   ========================================================= */
+.subheader-preview-header {
+  width: calc(100% - 10px);
+  min-height: 30px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================================================
+   LINE PREVIEW
+   ========================================================= */
+.subheader-preview-line {
+  width: calc(100% - 30px);
+  min-height: 1px;
+  border-radius: 1px;
+}
+
+/* =========================================================
+   MODAL FIELDS
+   ========================================================= */
+.subheader-modal-field {
+  margin: 0 13px 14px;
+}
+.subheader-modal-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #808895;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+/* =========================================================
+   MODAL INPUTS
+   ========================================================= */
+.subheader-modal-input,
+.subheader-modal-number,
+.subheader-modal-select {
+  width: 100%;
+  height: 31px;
+  padding: 5px 8px;
+  box-sizing: border-box;
+  background: #101216;
+  border: 1px solid #292f38;
+  border-radius: 5px;
+  color: #e7e9ed;
+  font-family: inherit;
+  font-size: 11px;
+  outline: none;
+}
+.subheader-modal-input:focus,
+.subheader-modal-number:focus,
+.subheader-modal-select:focus {
+  border-color: #505866;
+}
+.subheader-modal-number {
+  text-align: center;
+}
+
+/* =========================================================
+   COLOR PALETTE
+   ========================================================= */
+.subheader-color-palette {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+.subheader-color-option {
+  width: 100%;
+  height: 25px;
+  padding: 0;
+  border-radius: 5px;
+  border: 1px solid #838383;
+  cursor: pointer;
+  position: relative;
+  transition:
+    transform 0.1s ease,
+    border-color 0.1s ease;
+}
+.subheader-color-option:hover {
+  transform: translateY(-1px);
+  border-color: white;
+}
+.subheader-color-option.selected {
+  border-color: white;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+}
+
+/* =========================================================
+   TRANSPARENT / NONE COLOR
+   ========================================================= */
+.subheader-color-option.none {
+  background-color: #171a1f;
+  background-image:
+    linear-gradient(45deg, #8b9098 25%, transparent 25%, transparent 75%, #8b9098 75%),
+    linear-gradient(45deg, #8b9098 25%, transparent 25%, transparent 75%, #8b9098 75%);
+  background-position:
+    0 0,
+    6px 6px;
+  background-size: 12px 12px;
+}
+
+/* =========================================================
+   RANGE
+   ========================================================= */
+.subheader-range-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.subheader-range {
+  flex: 1;
+  min-width: 0;
+}
+.subheader-range-value {
+  width: 34px;
+  color: #808895;
+  font-family: monospace;
+  font-size: 10px;
+  text-align: right;
+}
+
+/* =========================================================
+   NODE WIDTH ADAPTATION
+   ========================================================= */
+.subheader-ui .subheader-element-row,
+.subheader-ui .subheader-element-card {
+  max-width: 100%;
+}
+.subheader-ui input,
+.subheader-ui button {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   NODES 2.0 (CSS GRID)
+   ========================================================= */
+.subheader-ui {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  /* Force le comportement en Grille si le parent est un Grid Container (Nodes 2.0) */
+  grid-row: span 1 / span 1;
+}
