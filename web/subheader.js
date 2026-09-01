@@ -1263,7 +1263,7 @@ function createCustomUI(node) {
     serialize: false,
   });
 
-  // --- CORRECTION : Permettre le redimensionnement manuel par l'utilisateur ---
+  // --- Manual resize ---
   const resizeObserver = new ResizeObserver(() => {
     const contentHeight = container.scrollHeight;
     if (contentHeight > 0) {
@@ -1272,7 +1272,6 @@ function createCustomUI(node) {
       const currentWidth = Math.max(360, Number(node.size?.[0] || 360));
       const currentHeight = Number(node.size?.[1] || 180);
 
-      // On force la taille UNIQUEMENT si le nœud est plus petit que son contenu HTML
       if (currentHeight < contentHeight) {
         node.size[0] = currentWidth;
         node.size[1] = contentHeight;
@@ -1308,8 +1307,8 @@ function createVisualLayoutItem(data) {
     __subHeaderNode: data.node,
     name: `__subheader_${data.node.id}_${Math.random()}`,
 
-    // --- COMPATIBILITÉ DOUBLE VERSION ---
-    canvasOnly: true, // Requis pour Nodes 2.0, ignoré par l'ancienne version
+    // --- NODE 2.0 prep ---
+    canvasOnly: true,
     // -------------------------------------
 
     hidden: false,

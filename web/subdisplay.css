@@ -1,6 +1,7 @@
 /* ============================================================
-   1. COMPATIBILITY AND PACK INTEGRATION (SUBHEADER STYLE)
+   SUBDISPLAY — CONFIGURATION ROW
    ============================================================ */
+
 .subheader-element-card {
   display: flex;
   align-items: center;
@@ -15,113 +16,131 @@
 }
 
 /* ============================================================
-   2. CONFIGURATION OF THE DEDICATED INTERNAL HTML PANEL
+   SUBTEXT SELECTOR
    ============================================================ */
-/* Boîte parente du texte (gérée par le JS en hauteur) */
+
+.subdisplay-subtext-selector {
+  flex: 1;
+  min-width: 0;
+  height: 25px;
+  margin-left: 7px;
+  padding: 3px 7px;
+  box-sizing: border-box;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+
+  background: transparent;
+  color: var(--sh-text);
+
+  font-family: inherit;
+  font-size: 12px;
+
+  outline: none;
+  cursor: pointer;
+}
+
+.subdisplay-subtext-selector:hover {
+  background: var(--sh-panel);
+  border-color: var(--sh-border);
+}
+
+.subdisplay-subtext-selector:focus {
+  background: #101216;
+  border-color: var(--sh-border-light);
+}
+
+/* ============================================================
+   MARKDOWN DISPLAY
+   ============================================================ */
+
 .subdisplay-ui {
   padding: 8px;
-  background-color: #111317;
-  border-radius: 6px;
-  border: 1px solid #232830;
   margin-top: 8px;
   box-sizing: border-box;
-  overflow: hidden; /* 🚀 IMPORTANT : Empêche le conteneur de déborder du nœud */
+
+  background-color: #111317;
+  border: 1px solid #232830;
+  border-radius: 6px;
+
+  overflow: hidden;
+
   display: flex;
   flex-direction: column;
 }
 
-/* Zone textuelle Markdown interne */
 .subdisplay-render-box {
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+
+  box-sizing: border-box;
+
+  padding-right: 4px;
+
   color: #e7e9ed;
   font-family: "Inter", system-ui, sans-serif;
   font-size: 11px;
   line-height: 1.4;
-  width: 100%;
-  height: 100%; /* 🚀 IMPORTANT : Remplit exactement la hauteur de .subdisplay-ui */
-  flex-grow: 1; /* S'étire pour occuper tout l'espace disponible */
-  overflow-y: auto; /* Active la scrollbar dès que le texte dépasse la hauteur du nœud */
-  overflow-x: hidden;
-  padding-right: 4px;
-  box-sizing: border-box;
-}
 
-/* Scrollbar minimaliste */
-.subdisplay-render-box::-webkit-scrollbar {
-  width: 4px;
-}
-.subdisplay-render-box::-webkit-scrollbar-track {
-  background: transparent;
-}
-.subdisplay-render-box::-webkit-scrollbar-thumb {
-  background: #232830;
-  border-radius: 4px;
-}
-.subdisplay-render-box::-webkit-scrollbar-thumb:hover {
-  background: #2d3139;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* ============================================================
-   3. ADVANCED MARKDOWN TABLES COMPONENT
+   MARKDOWN TABLES
    ============================================================ */
+
 .subdisplay-render-box table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
   margin: 8px 0;
+  border-collapse: collapse; /* Collapse eliminates browser margin spacing overflow bugs */
   border: 1px solid #232830;
   border-radius: 6px;
   overflow: hidden;
 }
 
-/* Header Row Styling (Distinctive yet non-aggressive) */
-.subdisplay-render-box tr:first-child {
+.subdisplay-render-box thead tr {
   background-color: #1e222a;
   color: #e5c07b;
   font-weight: 600;
 }
 
-/* Body Rows Alternating Background (Zebra Striping) */
-.subdisplay-render-box tr:not(:first-child):nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-/* Row Bottom Borders */
-.subdisplay-render-box tr:not(:last-child) {
+.subdisplay-render-box tbody tr:not(:last-child) {
   border-bottom: 1px solid #1a1d24;
 }
 
-/* Table Cells Structural Configuration */
-.subdisplay-render-box td {
-  padding: 6px 8px;
-  text-align: center; /* Centers text inside the HTML view cell */
-  border-bottom: 1px solid #1e222a;
+.subdisplay-render-box tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
-/* Remove bottom border from the final table row cells */
-.subdisplay-render-box tr:last-child td {
-  border-bottom: none;
+.subdisplay-render-box td {
+  padding: 6px 8px;
+  text-align: center;
+}
+
+/* Clear trailing borders natively across layout contexts */
+.subdisplay-render-box tbody tr:last-child td {
+  border-bottom: none !important;
 }
 
 /* ============================================================
-   4. FLEXBOX FLOW & MASTER COMPRESSED LAYOUT
+   SCROLLBAR
    ============================================================ */
-.subdisplay-master-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
+
+.subdisplay-render-box::-webkit-scrollbar {
+  width: 4px;
 }
 
-.subdisplay-master-container .subheader-ui {
-  flex-shrink: 0;
+.subdisplay-render-box::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.subdisplay-master-container .subdisplay-ui {
-  flex-grow: 1;
-  min-height: 60px;
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+.subdisplay-render-box::-webkit-scrollbar-thumb {
+  background: #232830;
+  border-radius: 4px;
+}
+
+.subdisplay-render-box::-webkit-scrollbar-thumb:hover {
+  background: #2d3139;
 }
