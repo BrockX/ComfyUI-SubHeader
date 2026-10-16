@@ -15,6 +15,16 @@ if (!document.querySelector(`link[href="${css.href}"]`)) {
   document.head.appendChild(css);
 }
 
+// Shared visual tokens for all three nodes (loaded only once).
+const modernHref = new URL("./modern.css", import.meta.url).href;
+if (!document.querySelector(`link[href="${modernHref}"]`)) {
+  const modernStyle = document.createElement("link");
+  modernStyle.rel = "stylesheet";
+  modernStyle.href = modernHref;
+  document.head.appendChild(modernStyle);
+}
+
+
 /* ============================================================
    MARKDOWN HELP
    ============================================================ */
@@ -227,7 +237,7 @@ app.registerExtension({
         const p = await originalGraphToPrompt.apply(this, arguments);
         const sessionMemory = {};
 
-        const allNodes = collectGraphNodes(app.graph);
+        const allNodes = collectGraphNodes(app.rootGraph || app.graph);
 
         for (const node of allNodes) {
           if (!node) continue;
@@ -444,6 +454,9 @@ Denoise : ${denoiseVal}`;
       const resolvedText = String(text);
 
       this.output_value = [resolvedText];
+      this.__subtextLastExecutedText = resolvedText;
+      this.properties ||= {};
+      this.properties.__subtextLastExecutedText = resolvedText;
 
       window.dispatchEvent(
         new CustomEvent("subtext-executed", {
@@ -460,7 +473,9 @@ Denoise : ${denoiseVal}`;
        DYNAMIC INPUTS
        ======================================================== */
 
+    const originalConnectionsChange = nodeType.prototype.onConnectionsChange;
     nodeType.prototype.onConnectionsChange = function (type, index, connected) {
+      originalConnectionsChange?.apply(this, arguments);
       if (type !== 1) return;
 
       const alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -580,7 +595,18 @@ Denoise : ${denoiseVal}`;
       }
 
       /* HELP MANUAL CONTROLLER BUTTON */
-      this.addWidget("button", "Help ?", null, () => showMarkdownHelp());
+      const helpWidget = this.addWidget("button", "Syntax guide  ↗", null, () => showMarkdownHelp());
+      if (helpWidget) helpWidget.serialize = false;
+      // Node 2.0 renders DOM widgets from its native widget list, and
+      // ignores getLayoutWidgets(). We position the friendly name row in
+      // the Vue grid without moving widgets in the saved node model.
+      const positionNameRow = () => {
+        const row = this.__subtextNameInput?.closest?.('[data-testid="node-widget"]');
+        const grid = row?.parentElement;
+        if (grid && row !== grid.firstElementChild) grid.prepend(row);
+      };
+      this.__positionSubtextNameRow = positionNameRow;
+      [0, 150, 600, 1400].forEach(ms => setTimeout(positionNameRow, ms));
 
       /* SIZE MANAGEMENT RE-INJECT */
       if (this.computeSize && this.setSize) {
@@ -619,6 +645,7 @@ Denoise : ${denoiseVal}`;
       }
 
       setTimeout(() => {
+        this.__positionSubtextNameRow?.();
         window.dispatchEvent(
           new CustomEvent("subtext-name-changed", {
             detail: {

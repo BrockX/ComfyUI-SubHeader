@@ -1,6 +1,8 @@
 # ComfyUI SubHeader
 
-A minimalist suite of custom nodes designed to organize, format, and display metadata directly within your ComfyUI subgraphs and workspace canvas.
+A compact suite of **three visual organization nodes** for ComfyUI, with a refreshed dark interface and compatibility paths for both **Nodes 1.0 (LiteGraph)** and **Nodes 2.0 (Vue)**.
+
+**Version 1.1.0** — builds on the original Sub Header / Sub Text / Sub Display nodes. Existing node type names, configuration JSON, colour keys, and workflow values are preserved.
 
 ---
 
@@ -85,7 +87,7 @@ Place these tags anywhere inside a **Sub Text** node to automatically populate y
    ```bash
    ComfyUI/custom_nodes/
    ```
-2. Restart ComfyUI.
+2. If you are upgrading an older version, replace its existing plugin files (your saved workflows are not stored in this folder). Restart ComfyUI and hard-refresh the browser to load the new JavaScript/CSS.
 3. Find your new tools inside the graph context menu search section under:
    ```text
    Subgraph UI -> Sub Header / Sub Text / Sub Display
@@ -95,13 +97,32 @@ Place these tags anywhere inside a **Sub Text** node to automatically populate y
 
 ## Creator's Notes
 
-**SUBHEADER IS NOT NODE 2.0 COMPATIBLE**
+This started as a personal project to keep busy ComfyUI subgraphs pleasant to use. Feel free to fork it, change it, and improve it.
 
-*I wanted to, then I saw the documentation and thought "meh, I'm not there yet".*
+## Renderer compatibility
 
-It was made as a personal project as I'm apparently a clean freak. I wanted my Subgraph organize with headers and all... then it grew into this.
-You will probably find some issues with it, and if you do, please feel free to share. I'm not certain I will fix them though, cause I'm lazy.
+- **Nodes 1.0** — decorative headers, dividers, and spacers are still drawn through the original LiteGraph layout hooks.
+- **Nodes 2.0** — the external subgraph uses actual non-serializing DOM widgets for decorations. Their *visible DOM rows* are placed among promoted controls; the stored order of ComfyUI's real widget values is not changed.
+- **Sub Text / Sub Display** use DOM widgets in both renderers. The display restores the latest cached text when possible.
+- Switching between renderers and loading older workflows should preserve the underlying configuration.
 
-Build with alongside an LLM. I made my best to comment and organize it so I could understand all.
+**Testing status:** Python and JavaScript syntax checks plus a mocked renderer compatibility test passed. Real-world behaviour in your installed version of ComfyUI is **not yet verified**; the Nodes 2.0 layout is an evolving part of ComfyUI.
 
-Want to fork it? Please do! You'll do a better job I'm sure. The idea is for everyone to enjoy the great pleasure of ORGANIZING! So, you feel free to do whatever you want with it!
+## What's new in 1.1.0
+
+- Restyled editor, spacing/line controls, settings panels and markdown dashboard.
+- New Nodes 2.0 bridge for inline decorations on promoted subgraph widgets.
+- Cleaner resizing and much less unnecessary canvas invalidation.
+- Fixed execution-result caching so Sub Display can reuse Sub Text results.
+- Better recursive lookup of Sub Text nodes inside nested subgraphs.
+- No additional Python packages or JavaScript dependencies.
+
+## Quick verification
+
+1. Open a workflow with an existing **Sub Header** inside a subgraph, and promote at least two widgets on the external subgraph.
+2. Add a header at position **2**: it should appear between the first and second promoted widgets.
+3. Switch ComfyUI between **Nodes 1.0** and **Nodes 2.0**, and repeat.
+4. Queue a **Sub Text** node and verify that the linked **Sub Display** shows its markdown output.
+5. Save/reopen the workflow and check that the header order, selected display name, and text are retained.
+
+To rerun the included local rendering smoke test (Node.js required only for the test): `node tests/compat_smoke.mjs`.

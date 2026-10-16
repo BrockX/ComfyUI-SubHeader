@@ -616,8 +616,11 @@
 .subheader-ui {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  /* Content height must not track the resized node height: Nodes 2.0
+     measures the widget again and would feed the extra space back into it. */
+  height: auto !important;
+  flex: none;
   width: 100%;
-  /* Force le comportement en Grille si le parent est un Grid Container (Nodes 2.0) */
+  /* Keep the existing Nodes 2.0 grid placement. */
   grid-row: span 1 / span 1;
 }

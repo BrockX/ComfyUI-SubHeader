@@ -1,4 +1,5 @@
 import { app } from "../../scripts/app.js";
+import { api } from "../../scripts/api.js";
 
 const EXTENSION_NAME = "ComfyUI.SubDisplay";
 const NODE_TYPE = "SubDisplay";
@@ -15,13 +16,23 @@ if (!document.querySelector(`link[href="${css.href}"]`)) {
   document.head.appendChild(css);
 }
 
+// Shared visual tokens for all three nodes (loaded only once).
+const modernHref = new URL("./modern.css", import.meta.url).href;
+if (!document.querySelector(`link[href="${modernHref}"]`)) {
+  const modernStyle = document.createElement("link");
+  modernStyle.rel = "stylesheet";
+  modernStyle.href = modernHref;
+  document.head.appendChild(modernStyle);
+}
+
+
 /* ============================================================
    MARKDOWN
    ============================================================ */
 
 function parseMarkdown(text) {
   if (!text) {
-    return "<span style='color:#606875; font-style:italic;'>Waiting for prompt execution...</span>";
+    return "<div class='sh-empty-output'><span class='sh-live-dot'></span><span>Waiting for a Sub Text result…</span></div>";
   }
 
   const html = String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -78,7 +89,7 @@ function parseMarkdown(text) {
 
         // 1. Render the structural Header Row safely (Index 0)
         const headerRow = tableRows[0];
-        const headerCellsHTML = headerRow.map(cell => `<td>${applyInlineFormatting(cell)}</td>`).join("");
+        const headerCellsHTML = headerRow.map(cell => `<th scope="col">${applyInlineFormatting(cell)}</th>`).join("");
         tableHTML += `<thead><tr>${headerCellsHTML}</tr></thead>`;
 
         // 2. Render all remaining Data Rows inside an explicit tbody
@@ -223,11 +234,11 @@ function collectSubTextNodes(graph, results = [], visited = new Set()) {
 function findSubTextByName(name) {
   const target = String(name ?? "").trim();
 
-  if (!target || !app.graph) {
+  if (!target || !(app.rootGraph || app.graph)) {
     return null;
   }
 
-  const nodes = collectSubTextNodes(app.graph);
+  const nodes = collectSubTextNodes(app.rootGraph || app.graph);
 
   for (const node of nodes) {
     if (getSubTextUniqueName(node) === target) {
@@ -236,6 +247,34 @@ function findSubTextByName(name) {
   }
 
   return null;
+}
+
+/* ============================================================
+   NATIVE WIDGET VISIBILITY (Nodes 1.0 + 2.0)
+   ============================================================ */
+
+function hideNativeNameWidget(node) {
+  const widget = node.widgets?.find(w => w && w.name === "unique_name");
+  if (!widget) return null;
+
+  // Keep this STRING widget alive and serializable: it is the backend value
+  // selected by our custom dropdown. Hide only its native visual control.
+  // Modern Vue nodes use options-based visibility, while older LiteGraph
+  // builds rely on widget.hidden / computeSize.
+  if (!widget.options) widget.options = {};
+  widget.options.hidden = true;
+  widget.options.canvasOnly = true;
+  widget.options.hideInPanel = true;
+  widget.hidden = true;
+  widget.computeSize = () => [0, -4];
+
+  // Some older STRING widgets create their own native input element.
+  // Do not touch the custom selector DOM widget.
+  for (const element of [widget.element, widget.inputEl]) {
+    if (element?.style) element.style.display = "none";
+  }
+
+  return widget;
 }
 
 /* ============================================================
@@ -254,25 +293,15 @@ app.registerExtension({
        NODE CREATED
        ======================================================== */
 
+    const originalCreated = nodeType.prototype.onNodeCreated;
     nodeType.prototype.onNodeCreated = function () {
-      /* REMOVE PHYSICAL INPUTS */
+      originalCreated?.apply(this, arguments);
+      // No physical inputs defined by Python; do not manually mutate slot
+      // arrays tracked by the modern Vue renderer.
 
-      if (this.inputs) {
-        while (this.inputs.length > 0) {
-          this.removeInput(0);
-        }
-      }
+      /* HIDE INTERNAL NAME IN BOTH NODE RENDERERS */
 
-      /* HIDE NATIVE WIDGETS */
-
-      if (this.widgets) {
-        for (const widget of this.widgets) {
-          widget.hidden = true;
-          widget.computeSize = () => [0, -4];
-        }
-      }
-
-      const uniqueNameWidget = this.widgets?.find(w => w && w.name === "unique_name");
+      const uniqueNameWidget = hideNativeNameWidget(this);
 
       this.__resolvedUniqueName = String(uniqueNameWidget?.value ?? "").trim();
 
@@ -286,7 +315,24 @@ app.registerExtension({
 
       const configContainer = document.createElement("div");
 
-      configContainer.className = "subheader-ui";
+      configContainer.className = "subheader-ui subdisplay-config-ui";
+
+      const headerPanel = document.createElement("div");
+      headerPanel.className = "sh-intro";
+      const headerLabels = document.createElement("div");
+      headerLabels.className = "sh-intro-left";
+      const eyebrow = document.createElement("div");
+      eyebrow.className = "sh-eyebrow";
+      eyebrow.textContent = "SUBGRAPH UI";
+      const title = document.createElement("div");
+      title.className = "sh-intro-heading";
+      title.textContent = "Live display";
+      headerLabels.append(eyebrow, title);
+      const state = document.createElement("span");
+      state.className = "sh-element-count";
+      state.textContent = "SUB TEXT";
+      headerPanel.append(headerLabels, state);
+      configContainer.append(headerPanel);
 
       const elementList = document.createElement("div");
 
@@ -349,7 +395,7 @@ app.registerExtension({
           ? String(uniqueNameWidget.value ?? "").trim()
           : String(this.__resolvedUniqueName ?? "").trim();
 
-        const subTextNodes = collectSubTextNodes(app.graph);
+        const subTextNodes = collectSubTextNodes(app.rootGraph || app.graph);
 
         const names = [];
 
@@ -381,11 +427,15 @@ app.registerExtension({
           selector.appendChild(option);
         }
 
-        if (names.includes(previousValue)) {
-          selector.value = previousValue;
-        } else {
-          selector.value = "";
+        // A restored subgraph can load its nested nodes *after* this DOM widget.
+        // Do not silently discard the saved selection in that brief window.
+        if (previousValue && !names.includes(previousValue)) {
+          const pendingOption = document.createElement("option");
+          pendingOption.value = previousValue;
+          pendingOption.textContent = previousValue;
+          selector.appendChild(pendingOption);
         }
+        selector.value = previousValue || "";
 
         this.__resolvedUniqueName = selector.value;
 
@@ -475,7 +525,7 @@ app.registerExtension({
            ====================================================== */
       this.properties = this.properties || {};
       // Fallback to existing saved property, or default to 11px
-      this.properties.__subdisplayFontSize = this.properties.__subdisplayFontSize || 11;
+      this.properties.__subdisplayFontSize = this.properties.__subdisplayFontSize || 12;
 
       const fontSizeContainer = document.createElement("div");
       fontSizeContainer.style.display = "flex";
@@ -585,6 +635,12 @@ app.registerExtension({
 
       this.addDOMWidget("subdisplay_config_ui", "SUBDISPLAY_CONFIG_UI", configContainer, {
         serialize: false,
+        // A fixed minimum is essential in Nodes 2.0: the header and selector
+        // would otherwise consume the widget's entire 200px allowance and
+        // collapse the Markdown panel to a line. Never derive this from
+        // this.size or DOM measurements (that caused the endless growth).
+        getMinHeight: () => 300,
+        getHeight: () => "100%",
       });
 
       this.__renderBox = renderBox;
@@ -606,20 +662,44 @@ app.registerExtension({
       window.addEventListener("subtext-name-changed", this.__subtextNameChangedHandler);
 
       /* ======================================================
-           SUBTEXT EXECUTION RESULTS
+           SUBTEXT EXECUTION RESULTS — BOTH RENDERERS
            ====================================================== */
 
-      this.__subtextExecutedHandler = event => {
-        const name = String(event.detail?.name ?? "").trim();
+      const acceptSubTextResult = (rawName, rawText) => {
+        const name = String(rawName ?? "").trim();
+        const selectedName = String(selector.value || uniqueNameWidget?.value || this.__resolvedUniqueName || "").trim();
+        if (!name || name !== selectedName || rawText === undefined || rawText === null) return;
 
-        if (!name || name !== this.__resolvedUniqueName) {
-          return;
+        const text = String(rawText);
+        // Keep the latest executed output available if the user reselects it.
+        const source = findSubTextByName(name);
+        if (source) {
+          source.__subtextLastExecutedText = text;
+          source.properties ||= {};
+          source.properties.__subtextLastExecutedText = text;
         }
-
-        renderText(String(event.detail?.text ?? ""));
+        if (text !== this.__resolvedMarkdownText) renderText(text);
       };
 
+      // Legacy path: SubText.onExecuted dispatches this event.
+      this.__subtextExecutedHandler = event => {
+        acceptSubTextResult(event.detail?.name, event.detail?.text);
+      };
       window.addEventListener("subtext-executed", this.__subtextExecutedHandler);
+
+      // Nodes 2.0 / nested subgraph fallback: the backend's `executed` event
+      // carries both text and unique_name in SubText's UI output. Listening
+      // directly avoids relying on the inner node's onExecuted callback being
+      // resolved to the currently displayed graph layer by ComfyUI.
+      this.__subdisplayApiExecutedHandler = event => {
+        const output = event.detail?.output;
+        if (!output || !Object.prototype.hasOwnProperty.call(output, "text") ||
+            !Object.prototype.hasOwnProperty.call(output, "unique_name")) return;
+        const name = Array.isArray(output.unique_name) ? output.unique_name[0] : output.unique_name;
+        const text = Array.isArray(output.text) ? output.text[0] : output.text;
+        acceptSubTextResult(name, text);
+      };
+      api.addEventListener("executed", this.__subdisplayApiExecutedHandler);
 
       /* INITIAL DISCOVERY */
 
@@ -637,7 +717,8 @@ app.registerExtension({
 
       /* INITIAL SIZE */
 
-      this.size = [360, 250];
+      // Keep saved workflow dimensions when the node is reconstructed.
+      this.size = [Math.max(360, this.size?.[0] || 360), Math.max(250, this.size?.[1] || 250)];
 
       setTimeout(() => {
         if (typeof this.onResize === "function") {
@@ -667,21 +748,10 @@ app.registerExtension({
       this.size[0] = size[0];
       this.size[1] = size[1];
 
-      const configWidget = this.widgets_dom?.find(w => w.name === "SUBDISPLAY_CONFIG_UI");
-
-      if (configWidget?.element) {
-        const textContainer = configWidget.element.querySelector(".subdisplay-ui");
-
-        const elementList = configWidget.element.querySelector(".subheader-element-list");
-
-        if (textContainer) {
-          const configHeight = elementList ? elementList.getBoundingClientRect().height : 46;
-
-          const remainingHeight = this.size[1] - configHeight - 32;
-
-          textContainer.style.height = `${Math.max(40, remainingHeight)}px`;
-        }
-      }
+      // The DOM widget's flex column owns its internal height. Do NOT size the
+      // text container from this.size: Vue measures the DOM back into node
+      // height, so any extra padding/row height creates a positive feedback
+      // loop on every resize. The render box scrolls instead of growing.
 
       this.setDirtyCanvas(true, true);
     };
@@ -699,7 +769,9 @@ app.registerExtension({
 
       this.properties = this.properties || {};
 
-      const uniqueNameWidget = this.widgets?.find(w => w && w.name === "unique_name");
+      // Workflow deserialization can refresh the widget state: reapply both
+      // the legacy and Vue visibility flags without changing its saved value.
+      const uniqueNameWidget = hideNativeNameWidget(this);
       this.__resolvedUniqueName = String(uniqueNameWidget?.value ?? "").trim();
 
       if (this.properties.__subdisplayLastText !== undefined && this.properties.__subdisplayLastText !== null) {
@@ -734,7 +806,10 @@ app.registerExtension({
         originalExecuted.apply(this, arguments);
       }
 
-      if (!message) return;
+      // Some frontend versions refresh the SubDisplay node after SubText has
+      // run without delivering the inner SubText callback to the visible layer.
+      // Reconcile any cached SubText result; incoming API events update live.
+      this.__resolveSelectedSubText?.(false);
     };
 
     /* ========================================================
@@ -750,6 +825,9 @@ app.registerExtension({
 
       if (this.__subtextExecutedHandler) {
         window.removeEventListener("subtext-executed", this.__subtextExecutedHandler);
+      }
+      if (this.__subdisplayApiExecutedHandler) {
+        api.removeEventListener("executed", this.__subdisplayApiExecutedHandler);
       }
 
       if (originalRemoved) {

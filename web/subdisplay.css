@@ -144,3 +144,43 @@
 .subdisplay-render-box::-webkit-scrollbar-thumb:hover {
   background: #2d3139;
 }
+
+/* ============================================================
+   NODE 1.0 / NODE 2.0 — RESIZE WITHOUT A HEIGHT FEEDBACK LOOP
+   ============================================================ */
+
+/* Let the DOM widget fill its *allocated widget space* rather than force
+   its contents to the total node height (which includes other layout). */
+.subdisplay-config-ui {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.subdisplay-config-ui > .sh-intro,
+.subdisplay-config-ui > .subheader-element-list {
+  flex: 0 0 auto;
+}
+
+/* The Markdown pane needs a genuine minimum. Zero was allowing the
+   introductory panel and selector to squeeze it down to a ~1-line strip in
+   Nodes 2.0, making even correctly received output invisible. The widget's
+   fixed 300px minimum reserves space without feeding resize changes back
+   into ComfyUI's node layout. */
+.subdisplay-config-ui > .subdisplay-ui {
+  flex: 1 1 auto;
+  min-height: 112px;
+  height: auto;
+  overflow: hidden;
+}
+
+.subdisplay-config-ui .subdisplay-render-box {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
